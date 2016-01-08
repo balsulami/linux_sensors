@@ -1,7 +1,5 @@
 
 #pragma once 
-
-#include"events_measure.h"
 #include<thread>
 class ParallelWorker {
 public:

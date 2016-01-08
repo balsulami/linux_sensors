@@ -6,15 +6,10 @@
 #include<string>
 #include <chrono>
 #include<algorithm>
-#include"../utils/functions.h"
-#include"../utils/format.h"
+#include"utils/encoding.h"
+#include"utils/format.h"
 #include<cstring>
-
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-#include"socket/win_socket.h"
-#else
 #include"socket/linux_socket.h"
-#endif
 
 using namespace std::chrono;
 

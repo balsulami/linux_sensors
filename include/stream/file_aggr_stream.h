@@ -10,7 +10,7 @@
 template<class T>
 class file_aggr_stream : public sensor_stream<T>{
 public:
-	file_aggr_stream(const char * name) : _file(name){
+	file_aggr_stream(const char * name,int size=1024) : _file(name),_size(size){
 
 	}
 
@@ -29,11 +29,9 @@ public:
 				sys_traces.push_back(iter->_syscall);
 				traces.emplace(iter->_pid,std::move(sys_traces));
 			}
-//			json.append(iter->to_string());
-//			json.append("\n");
 		}
-//		_file.write(json.c_str(), json.size());
-//		_file.flush();
+		if(traces.size() >= _size)
+			print_all();
 	}
 
 	void print_all(){
@@ -53,4 +51,5 @@ public:
 private:
 	std::ofstream _file;
 	std::unordered_map<pid_t,std::vector<syscall_t>> traces;
+	int _size ;
 };

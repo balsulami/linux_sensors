@@ -131,9 +131,9 @@ public:
 		_worker.join();
 	}
 
-	static void _read_stream(_in_type * _stream_queue, EventsWatch * _watch) { //T1 & inQ,T2 & outQ,DataAggregator<T3> & _data,EventsWatch & watch ){
-		std::ios_base::sync_with_stdio(false); // "/ccidata/ftrace_logs/trace_pipe-new.txt"
-		std::ifstream trace_pipe(FTRACE_PATH + "/" + "trace_pipe"); //"
+	static void _read_stream(_in_type * _stream_queue, EventsWatch * _watch) {
+		std::ios_base::sync_with_stdio(false);
+		std::ifstream trace_pipe(FTRACE_PATH + "/" + "trace_pipe");
 		_watch->start();
 
 		char line[READ_BUFFER_SIZE];
@@ -158,7 +158,7 @@ public:
 		_watch->stop();
 	}
 
-	static void _process_traces(_in_type * _stream_queue, _out_type * _result_queue, DataAggregator<T> * _data, Tracer * _tracer,EventsWatch * _watch){ //T1 & inQ,T2 & outQ,DataAggregator<T3> & _data,EventsWatch & watch ){
+	static void _process_traces(_in_type * _stream_queue, _out_type * _result_queue, DataAggregator<T> * _data, Tracer * _tracer,EventsWatch * _watch){
 		_watch->start();
 		EventsBulk* lines[BULK_CAPACITY];
 		while (true) {
@@ -187,7 +187,7 @@ public:
 		}
 	}
 
-	static void _send_stream(_out_type * _result_queue, EventsWatch * _watch, sensor_stream<T> * _stream, bool * _finished){ //T1 & inQ,T2 & outQ,DataAggregator<T3> & _data,EventsWatch & watch ){
+	static void _send_stream(_out_type * _result_queue, EventsWatch * _watch, sensor_stream<T> * _stream, bool * _finished){
 		_watch->start();
 		while (true) {
 			try {
@@ -206,9 +206,6 @@ public:
 						return;
 					}
 				}
-				auto _ptr = dynamic_cast<file_aggr_stream<T>*>(_stream);
-				if(_ptr != nullptr)
-					_ptr->print_all();
 			}
 			catch (std::exception &e) {
 				std::cout << e.what() << "\n";

@@ -16,21 +16,23 @@ public:
         for (auto it = lines.begin(); it != lines.end(); it++) {
             if (it->size() > 60) {
 
+
+                //extract process name
+                StringRef name(it->begin(), 16);
+
+                // extract pid
                 auto begin = it->begin();
                 StringRef pid(begin + 17, 5);
 
-                auto name_it = it->begin();
-
-                while (*name_it == ' ')++name_it;
-                StringRef name(name_it, 16 - (name_it - begin));
-
+                // extract timestamp
                 StringRef time(begin + 34, 13);
 
-                auto syscall_it = begin + 63;
-                while (*syscall_it++ != ' ');
-                StringRef syscall(begin + 63, syscall_it - (begin + 63));
+                //extract system call id
+                StringRef syscall(begin + 64,3);
 
-                StringRef args(syscall_it, it->end() - syscall_it);
+                // extract system call parameters (rest of the line)
+                auto param_it = begin+64;
+                StringRef args(param_it, it->end() - param_it);
 
                 data.append(name, pid, syscall, args);
             }

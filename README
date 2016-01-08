@@ -19,7 +19,9 @@ start
 -l
 	enable sys_sensor to show states on the program performance. The stats can be retrieved by using the argument 'status'.
 -o
-	writes the system calls traces to a local file.
+	writes the system calls traces to a local file. Only absolute path is supported.
+-a
+	aggregate the system calls traces to a local file. The default value is 1024 traces. Only absolute path is supported.
 -h
 	writes the system calls traces to a remote server.
 ================================================================

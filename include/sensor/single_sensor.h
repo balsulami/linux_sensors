@@ -15,7 +15,7 @@
 #include<thread>
 #include <iomanip>
 #include"events_bulk.h"
-#include "parallel_worker.h"
+#include "utils/parallel_worker.h"
 #include "trace/syscall_params.h"
 
 using std::setw;

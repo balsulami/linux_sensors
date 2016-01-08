@@ -5,115 +5,14 @@
 #include <fstream>
 #include"sensor/single_sensor.h"
 #include"sensor/multithreaded_sensor.h"
-#include"stream/console_stream.h"
+#include"sensor/sys_params_record.h"
 #include "stream/dumy_stream.h"
+#include "stream/file_stream.h"
 #include "stream/socket_stream.h"
-#include "utils/sys_record.h"
-#include "detector/anomaly_detector.h"
+#include "sensor/sys_record.h"
 
-std::string current_dir;
-
-typedef SysRecord sys_record;
-
-/*
-#  -p  pid or program name
-#  -pp program name (find all )
-#  -h host:port
-#  -m c,n,v ;// c compact,n names, v verbose
-#  -o output file
-#  -t time, in seconds, to send write data out
-#  -s buffer size
-#  -d 1000
-#   Example
-#   -p=1234 -s=0
-#   Results
-#   [process_name,pid,record time, syscall name]
-*/
-void usage(int argc, char *argv[]) {
-    if (argc >=1) {
-        printf("Usage: %s -h -nn", argv[0]);
-        printf("  Options:n");
-        printf("      -ntDon't fork off as a daemon.n");
-        printf("      -htShow this help screen.n");
-        printf("n");
-    }
-}
-
-#include <sys/stat.h>
-
-
-void setup_daemon(const std::string & deamon_name,const std::string & run_path) {
-    //------------
-    //Daemon Setup
-    //------------
-    pid_t pid, sid;
-
-
-    /* Fork off the parent process */
-    pid = fork();
-    if (pid < 0) {
-        exit(EXIT_FAILURE);
-    }
-    /* If we got a good PID, then
-           we can exit the parent process. */
-    if (pid > 0) {
-        std::cout << "Creating a daemon process pid= " << pid << "\n";
-        std::cout << "You can stop the process by the following command '" << deamon_name << " stop\n";
-        exit(EXIT_SUCCESS);
-    }
-
-    write_to(run_path + "/" + deamon_name + ".pid", std::to_string(getpid()));
-
-    /* Change the file mode mask */
-    umask(0);
-
-    /* Create a new SID for the child process */
-    sid = setsid();
-    if (sid < 0) {
-        /* Log the failure */
-        exit(EXIT_FAILURE);
-    }
-
-    /* Change the current working directory */
-    if ((chdir("/")) < 0) {
-        /* Log the failure */
-        exit(EXIT_FAILURE);
-    }
-
-    /* Close out the standard file descriptors */
-    close(STDIN_FILENO);
-    close(STDOUT_FILENO);
-    close(STDERR_FILENO);
-}
-
-
-int get_sensor_pid(const std::string & deamon_name, const std::string & run_path){
-	std::ifstream pid_file(run_path + "/" + deamon_name + ".pid");
-	int pid = -1;
-	if (pid_file.good())
-		pid_file >> pid;
-	pid_file.close();
-	return pid;
-}
-
-int remove_sensor_pid(const std::string & deamon_name, const std::string & run_path){
-	std::remove((run_path + "/" + deamon_name + ".pid").c_str());
-}
-
-int kill_sensor(int pid){
-	write_to(FTRACE_PATH + "/tracing_on", "0");
-	write_to(SYSCALLS_PATH + "/filter", "0");
-	write_to(SYSCALLS_PATH + "/" + SYS_ENTRY + "/" + "filter", "0");
-	write_to(SYSCALLS_PATH + "/" + SYS_EXIT + "/filter", "0");
-	sleep_sec(5);
-	auto curr_pid = get_pid();
-	auto pids = get_pids(pid);
-	for (auto itr = pids.begin();itr < pids.end(); itr++){
-		if(curr_pid != *itr)
-			kill(*itr, SIGKILL);
-	}
-	kill(pid, SIGKILL);
-}
+typedef SysRecord Record ;
+#include "utils/linux_daemon.h"
 
 template<typename T>
 sensor_stream<T> * setup_stream(std::vector<std::string> & args){
@@ -128,12 +27,13 @@ sensor_stream<T> * setup_stream(std::vector<std::string> & args){
 	}
     iter = std::find(args.begin(), args.end(), "-o");
     if (iter != args.end()){
-        return new file_aggr_stream<T>((iter + 1)->c_str());
+        return new file_stream<T>((iter + 1)->c_str());
     }
-    iter = std::find(args.begin(), args.end(), "-c");
-    if (iter != args.end()){
-        return new console_stream<T>();
-    }
+	iter = std::find(args.begin(), args.end(), "-a");
+	if (iter != args.end()){
+		// only SysRecord is supported
+		return new file_aggr_stream<T>((iter + 1)->c_str());
+	}
     return new dumy_stream<T>();
 }
 
@@ -205,7 +105,7 @@ int main(int argc, char ** argv) {
 		}
 	}
 	else if ((iter = std::find(args.begin(), args.end(), "start")) != args.end()) {
-		sensor_stream<sys_record> *stream = setup_stream<sys_record>(args);
+		sensor_stream<Record> *stream = setup_stream<Record>(args);
 		if (pid ==-1) {
 			setup_daemon(sensor_name, run_path);
 			iter = std::find(args.begin(), args.end(), "-r");
@@ -214,7 +114,7 @@ int main(int argc, char ** argv) {
 				// measure how many events the Linux generates
 			}
 			else {
-				multithreaded_sensor<sys_record> linux_sensor(stream);
+				multithreaded_sensor<Record> linux_sensor(stream);
 				linux_sensor.config_events(true, false);
 				iter = std::find(args.begin(), args.end(), "-l");
 				if (iter != args.end()) {
