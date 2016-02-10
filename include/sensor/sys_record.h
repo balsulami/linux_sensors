@@ -36,7 +36,7 @@ public:
 		while (begin != syscall_id.end()) {
 			if (*begin == ' ')
 				break;
-			_syscall = _syscall * 10 + (*begin - '0');
+			_syscall = _syscall * syscall_t(10) + (*begin - '0');
 			++begin;
 		}
 	}

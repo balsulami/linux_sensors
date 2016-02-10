@@ -125,11 +125,11 @@ public:
 	void stop(){
 	}
 
-	void join(){
-		_reader.join();
-		_sender.join();
-		_worker.join();
-	}
+	void join() {
+        _reader.join();
+        _sender.join();
+        _worker.join();
+    }
 
 	static void _read_stream(_in_type * _stream_queue, EventsWatch * _watch) {
 		std::ios_base::sync_with_stdio(false);

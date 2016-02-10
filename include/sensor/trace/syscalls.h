@@ -18,7 +18,7 @@ public:
                 auto begin = it->begin();
                 StringRef pid(begin + 17, 5);
 
-                StringRef syscall(begin + 64,3);
+                StringRef syscall(begin + 62,3);
 
                 data.append(pid, syscall);
             }

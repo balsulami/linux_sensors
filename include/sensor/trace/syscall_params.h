@@ -16,7 +16,6 @@ public:
         for (auto it = lines.begin(); it != lines.end(); it++) {
             if (it->size() > 60) {
 
-
                 //extract process name
                 StringRef name(it->begin(), 16);
 
@@ -24,14 +23,11 @@ public:
                 auto begin = it->begin();
                 StringRef pid(begin + 17, 5);
 
-                // extract timestamp
-                StringRef time(begin + 34, 13);
-
                 //extract system call id
-                StringRef syscall(begin + 64,3);
+                StringRef syscall(begin + 62,3);
 
                 // extract system call parameters (rest of the line)
-                auto param_it = begin+64;
+                auto param_it = begin+63;
                 StringRef args(param_it, it->end() - param_it);
 
                 data.append(name, pid, syscall, args);

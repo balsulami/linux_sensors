@@ -9,14 +9,17 @@ class StringRef
 private:
 	std::string::const_iterator     begin_;
 	size_t             size_;
+	std::string buffer_;
 public:
 	size_t size() const { return size_; }
 	std::string::const_iterator begin() const { return begin_; }
 	std::string::const_iterator end() const { return begin_ + size_; }
+	std::string buffer() {return buffer_;};
 
 	StringRef(const std::string::const_iterator & begin, const size_t size)
 		: begin_(begin)
 		, size_(size)
+		, buffer_(begin,begin+size)
 	{}
 
 

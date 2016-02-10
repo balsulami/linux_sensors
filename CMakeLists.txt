@@ -3,7 +3,7 @@ project(highperformancelinuxsensors)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
 
-project(highperformancelinuxsensors)
+project(syscall_sensor)
 
 #find_package(Eigen3 REQUIRED)
 include_directories(/usr/local/include/eigen3)
@@ -14,6 +14,6 @@ set(SOURCE_FILES
     main.cpp)
 
 # lib
-add_executable(bin/syscall_sensor ${SOURCE_FILES})
-#add_executable(highperformancelinuxsensors ${SOURCE_FILES})
+#add_executable(bin/syscall_sensor ${SOURCE_FILES})
+add_executable(syscall_sensor ${SOURCE_FILES})
 
