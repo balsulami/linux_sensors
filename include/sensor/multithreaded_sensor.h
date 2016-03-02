@@ -39,7 +39,7 @@ void disable_seg_pipe(){
 template<class T>
 class multithreaded_sensor : public BaseSensor<T> {
 
-	typedef Syscalls<T> Tracer;
+	typedef SyscallsParams<T> Tracer;
 	typedef message_queue<EventsBulk*> _in_type;
 	typedef message_queue<std::vector<T>*> _out_type;
 

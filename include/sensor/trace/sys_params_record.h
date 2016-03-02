@@ -14,7 +14,7 @@ public:
 			SysRecord(pid,syscall)
 	{
 		set_name(name);
-		set_arg(arg);
+//		set_arg(arg);
 	}
 
 	void set_name(StringRef & name){
