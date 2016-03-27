@@ -5,13 +5,12 @@
 #include <fstream>
 #include"sensor/single_sensor.h"
 #include"sensor/multithreaded_sensor.h"
-#include"sensor/sys_params_record.h"
 #include "stream/dumy_stream.h"
 #include "stream/file_stream.h"
 #include "stream/socket_stream.h"
-#include "sensor/sys_record.h"
+#include "sensor/trace/sys_params_record.h"
 
-typedef SysRecord Record ;
+typedef SysParamsRecord Record ;
 #include "utils/linux_daemon.h"
 
 template<typename T>
